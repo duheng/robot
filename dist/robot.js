@@ -44,6 +44,28 @@ function _objectSpread2(target) {
   return target;
 }
 
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+
+function _defineProperties(target, props) {
+  for (var i = 0; i < props.length; i++) {
+    var descriptor = props[i];
+    descriptor.enumerable = descriptor.enumerable || false;
+    descriptor.configurable = true;
+    if ("value" in descriptor) descriptor.writable = true;
+    Object.defineProperty(target, descriptor.key, descriptor);
+  }
+}
+
+function _createClass(Constructor, protoProps, staticProps) {
+  if (protoProps) _defineProperties(Constructor.prototype, protoProps);
+  if (staticProps) _defineProperties(Constructor, staticProps);
+  return Constructor;
+}
+
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -57,6 +79,85 @@ function _defineProperty(obj, key, value) {
   }
 
   return obj;
+}
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+function _possibleConstructorReturn(self, call) {
+  if (call && (typeof call === "object" || typeof call === "function")) {
+    return call;
+  }
+
+  return _assertThisInitialized(self);
+}
+
+function _createSuper(Derived) {
+  var hasNativeReflectConstruct = _isNativeReflectConstruct();
+
+  return function _createSuperInternal() {
+    var Super = _getPrototypeOf(Derived),
+        result;
+
+    if (hasNativeReflectConstruct) {
+      var NewTarget = _getPrototypeOf(this).constructor;
+
+      result = Reflect.construct(Super, arguments, NewTarget);
+    } else {
+      result = Super.apply(this, arguments);
+    }
+
+    return _possibleConstructorReturn(this, result);
+  };
 }
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -1838,72 +1939,98 @@ addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
 
-var Base = {
-  config: {},
+let Base = /*#__PURE__*/function () {
+  function Base() {
+    _classCallCheck(this, Base);
 
-  async use(plugin, ...args) {
-    await plugin.init(this, ...args);
-  },
-
-  async creatBrowser(options) {
-    return await puppeteer__default['default'].launch(_objectSpread2({}, options));
-  },
-
-  async creatPage(browser) {
-    return await browser.newPage();
-  },
-
-  async openUrl(page, url) {
-    return await page.goto(url);
+    this.config = {
+      type: 'scrape'
+    };
   }
 
-};
+  _createClass(Base, [{
+    key: "mergeConfig",
+    value: function mergeConfig(opts) {
+      this.config = _objectSpread2(_objectSpread2({}, this.config), opts);
+    }
+  }, {
+    key: "use",
+    value: async function use(plugin, ...args) {
+      await plugin.init(this, ...args);
+    }
+  }, {
+    key: "creatBrowser",
+    value: async function creatBrowser(options) {
+      return await puppeteer__default['default'].launch(_objectSpread2({}, options));
+    }
+  }, {
+    key: "creatPage",
+    value: async function creatPage(browser) {
+      return await browser.newPage();
+    }
+  }, {
+    key: "openUrl",
+    value: async function openUrl(page, url) {
+      return await page.goto(url);
+    }
+  }]);
+
+  return Base;
+}();
 
 const Parse = {
-  async wx(page) {
-    let __data = {};
-    let __keySelector = '#docContent .content h3';
-    let __valueSelector = '#docContent .content ol';
-    await page.waitForSelector(__keySelector);
-    await page.waitForSelector(__valueSelector);
-    const __key = document.querySelector(__keySelector).innerText;
-    const __value = document.querySelector(__valueSelector).outerHTML;
-    __data[__key] = __value;
-    return __data;
+  wx: {
+    async waitSelector(page) {
+      let __keySelector = '#docContent .content h3';
+      let __valueSelector = '#docContent .content ol';
+      await page.waitForSelector(__keySelector);
+      await page.waitForSelector(__valueSelector);
+    },
+
+    parseDom() {
+      let __data = {};
+      let __keySelector = '#docContent .content h3';
+      let __valueSelector = '#docContent .content ol';
+      const __key = document.querySelector(__keySelector).innerText;
+      const __value = document.querySelector(__valueSelector).outerHTML;
+      __data[__key] = __value;
+      return __data;
+    }
+
   },
+  alipay: {
+    async waitSelector(page) {
+      let __keySelector = '#docsArticleContent h2';
+      let __valueSelector = '#docsArticleContent ul';
+      await page.waitForSelector(__keySelector);
+      await page.waitForSelector(__valueSelector);
+    },
 
-  alipay() {
-    let __data = {};
-    let __keySelector = '#docsArticleContent h2';
-    let __valueSelector = '#docsArticleContent ul'; // await page.waitForSelector(__keySelector)
-    // await page.waitForSelector(__valueSelector)
+    parseDom() {
+      let __data = {};
+      let __keySelector = '#docsArticleContent h2';
+      let __valueSelector = '#docsArticleContent ul';
+      const __key = document.querySelector(__keySelector).innerText;
+      const __value = document.querySelector(__valueSelector).outerHTML;
+      __data[__key] = __value;
+      return __data;
+    }
 
-    const __key = document.querySelector(__keySelector).innerText;
-    const __value = document.querySelector(__valueSelector).outerHTML;
-    __data[__key] = __value;
-    return __data;
   }
-
 };
 
 var Scrape = {
   async init(core) {
     this.core = core;
-    this.browser = await core.creatBrowser({
-      headless: false
-    });
-    this.page = await core.creatPage(this.browser);
   },
 
   async getData(platform, url) {
-    const Page = this.page;
-    await this.core.openUrl(Page, url);
-    let __keySelector = '#docsArticleContent h2';
-    let __valueSelector = '#docsArticleContent ul';
-    await Page.waitForSelector(__keySelector);
-    await Page.waitForSelector(__valueSelector);
-    const result = await Page.evaluate(Parse[platform]);
-    this.browser.close();
+    const {
+      page
+    } = this.core;
+    await this.core.openUrl(page, url);
+    await Parse[platform].waitSelector(page);
+    const result = await page.evaluate(Parse[platform].parseDom);
     return result;
   }
 
@@ -1912,20 +2039,57 @@ var Scrape = {
 const actionType = {
   scrape: Scrape
 };
-const Robot = {
-  async init(options = {}) {
-    Base.config = _objectSpread2(_objectSpread2({}, Base.config), options);
-    await Base.use(Scrape);
-  },
 
-  async getScrapeData(platform, url) {
-    if (actionType['scrape']) {
-      return await actionType['scrape'].getData(platform, url);
-    } else {
-      console.log('没找到该类型的action');
-    }
+let Robot = /*#__PURE__*/function (_Base) {
+  _inherits(Robot, _Base);
+
+  var _super = _createSuper(Robot);
+
+  function Robot(opts = {}) {
+    var _this;
+
+    _classCallCheck(this, Robot);
+
+    _this = _super.call(this, opts); // 合并参数
+
+    _this.mergeConfig(opts);
+
+    return _this;
   }
 
-};
+  _createClass(Robot, [{
+    key: "init",
+    value: async function init() {
+      // 浏览器
+      await this.initBrowser(); // 初始化插件
+
+      await this.initModules();
+    }
+  }, {
+    key: "initBrowser",
+    value: async function initBrowser() {
+      this.browser = await this.creatBrowser({
+        headless: false
+      });
+      this.page = await this.creatPage(this.browser);
+    }
+  }, {
+    key: "initModules",
+    value: async function initModules() {
+      await this.use(Scrape);
+    }
+  }, {
+    key: "getScrapeData",
+    value: async function getScrapeData(platform, url) {
+      if (actionType['scrape']) {
+        return await actionType['scrape'].getData(platform, url);
+      } else {
+        console.log('没找到该类型的action');
+      }
+    }
+  }]);
+
+  return Robot;
+}(Base); // const Robot = {
 
 module.exports = Robot;
