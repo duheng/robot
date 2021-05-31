@@ -16,29 +16,19 @@ const saveCallBack =  (data) => {
 }
 
 
-
-
 const __Robot = new Robot({ type: 'scrape' })
-__Robot.init().then(res=>{
-       const getChangeLog = async () => {
-        for(let item of Object.keys(__url)){
-            let __data =   await __Robot.getScrapeData(item, __url[item])
-             let item1 = await saveCallBack(__data)
-             console.log(item1)
-        }
-        console.log('done')
-    }
-    getChangeLog()
+__Robot.init().then(_=>{
+    getChangeLog()  
 })
-// Robot.init().then(res=>{
-//     const getChangeLog = async () => {
-//         for(let item of Object.keys(__url)){
-//             let __data =   await Robot.getScrapeData(item, __url[item])
-//              let item1 = await saveCallBack(__data)
-//              console.log(item1)
-//         }
-//         console.log('done')
-//     }
-//     getChangeLog()
-  
-//  })
+const getChangeLog = async () => {
+    for(let item of Object.keys(__url)){
+        let __data =   await __Robot.getScrapeData(item, __url[item])
+         let item1 = await saveCallBack(__data)
+         console.log(item1)
+    }
+    await __Robot.closeBrowser()
+    console.log('done')
+}
+
+
+// getChangeLog

@@ -22,4 +22,5 @@ export default class Base {
   async openUrl(page, url) {
     return await page.goto(url)
   }
+ 
 }

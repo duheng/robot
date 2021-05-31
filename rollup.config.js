@@ -19,7 +19,7 @@ import external from "rollup-plugin-peer-deps-external";
 
 const entry = {
     robot: './src/robot.js',
-   // example: './example/demo.js',
+    demo: './example/demo.js',
 }
 
 function generateWebConfig(isBrowser,input) {
@@ -77,7 +77,7 @@ function generateWebConfig(isBrowser,input) {
 
 const build = () => {
     return Object.keys(entry).map(item=>{
-        return generateWebConfig(true,entry[item])
+        return generateWebConfig(false,entry[item])
     })
 }
 module.exports = build();

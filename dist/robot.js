@@ -2079,6 +2079,13 @@ let Robot = /*#__PURE__*/function (_Base) {
       await this.use(Scrape);
     }
   }, {
+    key: "closeBrowser",
+    value: async function closeBrowser() {
+      if (this.browser) {
+        return await this.browser.close();
+      }
+    }
+  }, {
     key: "getScrapeData",
     value: async function getScrapeData(platform, url) {
       if (actionType['scrape']) {
@@ -2090,6 +2097,6 @@ let Robot = /*#__PURE__*/function (_Base) {
   }]);
 
   return Robot;
-}(Base); // const Robot = {
+}(Base);
 
 module.exports = Robot;

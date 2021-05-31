@@ -1779,7 +1779,7 @@ addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
 
-const Robot = require('../dist/robot');
+const Robot = require('./robot');
 
 const __url = {
   alipay: 'https://opendocs.alipay.com/mini/00d5f5',
@@ -1798,9 +1798,7 @@ const __Robot = new Robot({
   type: 'scrape'
 });
 
-__Robot.init().then(_ => {
-  getChangeLog();
-});
+__Robot.init();
 
 const getChangeLog = async () => {
   for (let item of Object.keys(__url)) {
@@ -1810,6 +1808,7 @@ const getChangeLog = async () => {
     console.log(item1);
   }
 
-  await __Robot.closeBrowser();
   console.log('done');
-}; // getChangeLog
+};
+
+getChangeLog(); // getChangeLog

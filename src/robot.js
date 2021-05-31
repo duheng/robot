@@ -21,8 +21,15 @@ class Robot extends Base {
     this.page = await this.creatPage(this.browser)
   }
   async initModules() {
-   await this.use(Scrape)
+    await this.use(Scrape)
   }
+
+  async closeBrowser() {
+    if(this.browser) {
+      return await this.browser.close()
+    }
+  } 
+
   async getScrapeData(platform, url ) {
     if(actionType['scrape']) {
       return await actionType['scrape'].getData(platform, url)
@@ -33,19 +40,5 @@ class Robot extends Base {
   }
   
 }
-// const Robot = {
-//     async init(options = {}) {
-//       Base.config = {...Base.config, ...options}
-//       await Base.use(Scrape)
-//     },
 
-//     async getScrapeData(platform, url ) {
-//       if(actionType['scrape']) {
-//         return await actionType['scrape'].getData(platform, url)
-//       }else {
-//         console.log('没找到该类型的action')
-//       }
-      
-//     }
-//   }
   export default Robot;
