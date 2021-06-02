@@ -1992,7 +1992,7 @@ const Parse = {
       let __keySelector = '#docContent .content h3';
       let __valueSelector = '#docContent .content ol';
       const __key = document.querySelector(__keySelector).innerText;
-      const __value = document.querySelector(__valueSelector).outerHTML;
+      const __value = document.querySelector(__valueSelector).outerText;
       __data[__key] = __value;
       return __data;
     }
@@ -2011,7 +2011,26 @@ const Parse = {
       let __keySelector = '#docsArticleContent h2';
       let __valueSelector = '#docsArticleContent ul';
       const __key = document.querySelector(__keySelector).innerText;
-      const __value = document.querySelector(__valueSelector).outerHTML;
+      const __value = document.querySelector(__valueSelector).outerText;
+      __data[__key] = __value;
+      return __data;
+    }
+
+  },
+  react: {
+    async waitSelector(page) {
+      let __keySelector = '#readme .markdown-body h2';
+      let __valueSelector = '#readme .markdown-body ul';
+      await page.waitForSelector(__keySelector);
+      await page.waitForSelector(__valueSelector);
+    },
+
+    parseDom() {
+      let __data = {};
+      let __keySelector = '#readme .markdown-body h2';
+      let __valueSelector = '#readme .markdown-body ul';
+      const __key = document.querySelector(__keySelector).innerText;
+      const __value = document.querySelector(__valueSelector).outerText;
       __data[__key] = __value;
       return __data;
     }
@@ -2030,6 +2049,7 @@ var Scrape = {
     } = this.core;
     await this.core.openUrl(page, url);
     await Parse[platform].waitSelector(page);
+    await page.waitFor(1500);
     const result = await page.evaluate(Parse[platform].parseDom);
     return result;
   }
@@ -2068,10 +2088,12 @@ let Robot = /*#__PURE__*/function (_Base) {
   }, {
     key: "initBrowser",
     value: async function initBrowser() {
-      this.browser = await this.creatBrowser({
-        headless: false
-      });
+      const {
+        browser
+      } = this.config;
+      this.browser = await this.creatBrowser(_objectSpread2({}, browser));
       this.page = await this.creatPage(this.browser);
+      await this.page.setDefaultNavigationTimeout(0); // 不受超时限制
     }
   }, {
     key: "initModules",

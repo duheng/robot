@@ -17,8 +17,10 @@ class Robot extends Base {
     await this.initModules();
   }
   async initBrowser() {
-    this.browser = await this.creatBrowser({headless: false})
+    const { browser } = this.config
+    this.browser = await this.creatBrowser({...browser})
     this.page = await this.creatPage(this.browser)
+    await this.page.setDefaultNavigationTimeout(0); // 不受超时限制
   }
   async initModules() {
     await this.use(Scrape)
